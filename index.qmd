@@ -11,7 +11,7 @@ format:
         text: Visitanos
         icon: file-code
         href: https://www.masterx.academy/
-theme: Dark
+theme: league
      
 ---
 

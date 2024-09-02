@@ -80,7 +80,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Tabla de contenidos</h2>
    
   <ul>
-  <li><a href="#quarto" id="toc-quarto" class="nav-link active" data-scroll-target="#quarto">Quarto</a></li>
+  <li><a href="#este-es-mi-base-de-datos" id="toc-este-es-mi-base-de-datos" class="nav-link active" data-scroll-target="#este-es-mi-base-de-datos">Este es mi base de Datos</a></li>
+  <li><a href="#quarto" id="toc-quarto" class="nav-link" data-scroll-target="#quarto">Quarto</a></li>
   <li><a href="#running-code" id="toc-running-code" class="nav-link" data-scroll-target="#running-code">Running Code</a></li>
   </ul>
 <div class="quarto-code-links"><h2>Code Links</h2><ul><li><a href="https://www.masterx.academy/"><i class="bi bi-file-code"></i>Visitanos</a></li></ul></div></nav>
@@ -114,18 +115,40 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<div class="cell">
+<section id="este-es-mi-base-de-datos" class="level2">
+<h2 class="anchored" data-anchor-id="este-es-mi-base-de-datos">Este es mi base de Datos</h2>
+<div class="cell" data-layout-align="center" data-scrollable="true">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">echo =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">warning =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">fig.width =</span> <span class="dv">7</span>,</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">fig.height =</span> <span class="dv">5</span>,</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">fig.align =</span> <span class="st">"center"</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>Base_datos <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"bases/Data-JAPPL-2023-00856.xlsx"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>Base_datos </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 180 × 22
+   Site    Management   Point Month    Year `Crown damage` `Frond damage`
+   &lt;chr&gt;   &lt;chr&gt;        &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt;          &lt;dbl&gt;          &lt;dbl&gt;
+ 1 Banting Smallholding     1 January  2014           5.25          13.3 
+ 2 Banting Smallholding     2 January  2014           5.29          11.2 
+ 3 Banting Smallholding     3 January  2014           1.58          22.5 
+ 4 Banting Smallholding     4 January  2014           4.92           6.13
+ 5 Banting Smallholding     5 January  2014           2.04           2.38
+ 6 Banting Smallholding     6 January  2014           2.75           7.17
+ 7 Banting Smallholding     7 January  2014           2.58           1.5 
+ 8 Banting Smallholding     8 January  2014           5.25          22.7 
+ 9 Banting Smallholding     9 January  2014           1              5.2 
+10 Banting Smallholding    10 January  2014           3.5            5   
+# ℹ 170 more rows
+# ℹ 15 more variables: `Oil palm height` &lt;dbl&gt;, `Grass cover` &lt;dbl&gt;,
+#   `Shrub cover` &lt;dbl&gt;, `Dried biomass` &lt;dbl&gt;, `Epiphyte cover` &lt;dbl&gt;,
+#   `Canopy cover` &lt;dbl&gt;, `Distance to forest patch` &lt;dbl&gt;,
+#   `Distance to continuous forest` &lt;dbl&gt;, Elevation &lt;dbl&gt;,
+#   `Bird richness (overall)` &lt;dbl&gt;, `Bird abundance (overall)` &lt;dbl&gt;,
+#   `Bird richness (insectivore)` &lt;dbl&gt;, …</code></pre>
 </div>
+</div>
+</section>
 <section id="quarto" class="level2">
 <h2 class="anchored" data-anchor-id="quarto">Quarto</h2>
 <p>Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <a href="https://quarto.org" class="uri">https://quarto.org</a>.</p>
@@ -136,7 +159,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell" data-layout-align="center">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 2</code></pre>

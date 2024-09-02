@@ -29,6 +29,19 @@ knitr::opts_chunk$set(
 
 ```
 
+## Este es mi base de Datos
+
+```{r}
+#| label: Carga de datos
+#| scrollable: True
+library(readxl)
+Base_datos <- read_excel("bases/Data-JAPPL-2023-00856.xlsx")
+
+Base_datos 
+```
+
+
+
 
 ## Quarto
 

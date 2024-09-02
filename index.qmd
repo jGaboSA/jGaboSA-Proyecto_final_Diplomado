@@ -18,7 +18,7 @@ theme: league
 
 ```{r}
 #| label: Setup
-#| include: True
+#| include: False
 knitr::opts_chunk$set(
   echo = TRUE,
   warning = FALSE,

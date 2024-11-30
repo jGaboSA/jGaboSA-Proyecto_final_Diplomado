@@ -1,0 +1,521 @@
+---
+title: "Módulo 6: Inferencia Estadística"
+output: html_notebook
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+pak::pak(c("openxlsx","rstatix", "tidyverse", "nortest",
+           "ggstatsplot", "performance", "pwr", "pwr2", "simr"))
+install.packages("car")
+
+pak::pak("irwingss/masterX")
+```
+
+```{r}
+library(tidyverse)
+library(openxlsx)
+library(performance)
+library(ggstatsplot)
+library(rstatix)
+library(pwr)
+library(pwr2)
+library(simr)
+library(nortest)
+library(car)
+```
+
+# Cargar bases de datos
+
+```{r}
+
+macro <- openxlsx :: read.xlsx("bases/Khatri et al 2022 benthic macroinvertebrates assemblages.xlsx")
+
+fire <- openxlsx :: read.xlsx("bases/Fire 2024/fxh_complete_2021-2_dryad.xlsx")
+
+proyecto <- openxlsx :: read.xlsx("bases/Base de datos/Data-JAPPL-2023-00856.xlsx")
+
+vege <- openxlsx::read.xlsx("bases/fxh_vegetation_2021-2_dryad.xlsx")
+vege <- vege %>% 
+  rename(rgr_diam_plot_20_21 = `rgr_diam_plot_20-21`)
+str(vege)
+
+
+plot(density(vege$rgr_diam_plot_20_21))
+
+plot(density(vege$rgr_diam_plot_20_21))
+
+```
+
+
+# Pruebas de Normalidad
+
+```{r}
+# Ejemplo de clase Shapiro
+
+shapiro.test(macro$Total.Catch) #No existe normalidad en los datos
+qqplot(macro$Total.Catch, macro$Family) # No hay normalidad en los datos
+
+
+shapiro.test(fire$grass_biomass_21)
+
+for (i in 10:13){
+  normalidad <- shapiro.test(fire[,i])
+  print(normalidad)
+} # Test automatizado para la normalidad
+
+# Ejemplo de clase de Kosmogorov_Smirnov
+ks.test(fire$grass_biomass_21, "pnorm", 
+        mean <- mean(fire$grass_biomass_21), 
+        sd <- sd(fire$grass_biomass_21))
+
+# PARA QUITARLE LOS NA DENTRO DE LA BASE DE DATOS
+ks.test(fire$grass_biomass_21, "pnorm", 
+        mean <- mean(fire$grass_biomass_21, na.rm = T), 
+        sd <- sd(fire$grass_biomass_21, na.rm = T))
+
+# Ejemplo de clase Normtest
+nortest::lillie.test(fire$grass_biomass_21) #LILLIEFORS
+nortest::cvm.test(fire$grass_biomass_21) # CRAMER-VON
+nortest::ad.test(fire$grass_biomass_21) # ANDERSON-DARLING
+nortest::sf.test(fire$grass_biomass_21) # SHAPIRO-FRANCIA
+
+# Ejemplo de clase masterX
+
+masterX::NormTests(fire$grass_biomass_21)
+
+# ZHANG WU -> SON LOS MEJORES, Y MÁS POTENTES PARA PODER DETERMINAR SI LOS DATOS SON NORMALES
+
+masterX::NormTests(proyecto$`Bird.richness.(non-insectivore)`)
+
+for (i in 17:22) {
+  normal <- masterX::NormTests(proyecto[,i])
+  print(normal)
+}
+
+#  PARA QUITAR VALORES na "ESCRITOS" QUE CONVIERTEN A LOS DATOS COMO CHARACTER
+
+for (col in 1:ncol(proyecto)){
+  for (row in 1:nrow(proyecto)){
+    extraer <- proyecto[row,col]
+    valor <- ifelse(extraer == "na", "", extraer)
+    proyecto[col, row] <- valor
+  }
+}
+
+# PARA CAMBIAR EL ESTADO DE UNA COLUMNA, DE CHARACTER A NUMERIC
+
+**proyecto$XX <- as.numeric(proyecto$XX)**
+
+
+
+view(proyecto)
+```
+
+
+# Crear QQpplot
+```{r}
+
+# EJECUTAR JUNTOOOS 
+
+qqnorm(fire$grass_biomass_21)
+qqline(fire$grass_biomass_21)
+
+plot(density(fire$grass_biomass_21, na.rm = T))
+
+
+plot(density(proyecto$`Bird.richness.(overall)`))
+qqnorm(proyecto$`Bird.richness.(overall)`)
+qqline(proyecto$`Bird.richness.(overall)`)
+```
+
+# Graficos con ggplot
+```{r}
+ggplot(fire, aes(sample = grass_biomass_21,
+                 color = fire))+
+  geom_qq()+
+  geom_qq_line()+
+  facet_wrap(~fire) # ordenado
+  #facet_grid(.~fire) # a lado de cada uno
+  #facet_grid(fire~.) # ordenado de arriba abajo
+
+ggplot(proyecto, aes(sample = `Bird.richness.(overall)`,
+                     color = Month))+
+  geom_qq()+
+  geom_qq_line()+
+  #facet_wrap(~Year)
+  facet_wrap(~Management)
+  #facet_grid(Month~.)
+  
+```
+
+
+# Pruebas de T, Wilcoxon y Mann-Withney
+
+```{r}
+# PRIMER CASO: TASA DE CRECIMIENTO PROMEDIO DE ZONAS QUEMADAS (hot) Y NO QUEMADOS (control)
+
+vege_hot <- vege %>% 
+  filter(fire == "Hot") %>% 
+  pull(rgr_diam_plot_20_21)
+vege_hot
+
+vege_control <- vege %>% 
+  filter(fire == "Control") %>% 
+  pull(rgr_diam_plot_20_21)
+vege_control
+
+#PARA TRABAJAR CON LEVENE
+vege_hc <- vege %>% 
+  filter(fire %in% c("Hot", "Control"))
+
+vege_hc <- 
+
+# A1: FUNCION DE PRUEBAS DE NORMALIDAD
+shapiro.test(vege_hot)
+shapiro.test(vege_control)
+
+
+# A2: FUNCION DE HOMOCEDASTICIDAD
+vege_hc <- vege %>% 
+  filter(fire %in% c("Hot", "Control"))
+
+leveneTest(rgr_diam_plot_20_21 ~ fire, data = vege_hc, center = mean)
+
+# p-valor > 0.05, por lo tanto no hay evidencias para rechazar H0,... varianzas iguales
+
+# CREAR LA PRUEBA t PARA MUESTRAS INDEPENDIENTES
+t.test(rgr_diam_plot_20_21 ~ fire, data = vege_hc,
+       var.equal = TRUE)
+t.test(vege_hot, vege_control,
+       paired  = FALSE,
+       var.equal = TRUE)
+p-valor = 0.4758
+# p-valor > 0.05, NO HAY EVIDENCIAS SUFICIENTES, PARA RECHAZAR LA H0, NO SE RECHAZA LA H0, POR LO TANTO, NO HAY DIFERENCIAS SIGNIFICATIVAS ENTRE AMBOS GRUPOS.
+
+
+library(ggstatsplot)
+ggbetweenstats() # CUANDO HAY MUESTRAS INDEPENDIENTES
+ggwithinstats() # CUANDO HAY MUESTRAS PAREADAS O DEPENDIENTES
+
+ggbetweenstats(vege_hc, x = fire, y = rgr_diam_plot_20_21,
+               type = "p", var.equal = TRUE)
+
+
+# AL REVISAR LA COMPARATIVA ENTRE LOS DOS GRUPOS  (hot y control), SE ENCCONTRO QUE NO EXISTEN DIFERENCIAS SIGNIFICATIVAS ENTRE ELLOS PARA SU NIVEL DE TASA DE CRECIMIENTO PROMEDIO DE LOS ÁRBOLES (p-valor = 0.48, gl = 37, Ghedges = 0.23 [-0.40. 0.84]
+
+# Reporte
+
+install.packages("report")
+
+pruebaT <- t.test(rgr_diam_plot_20_21 ~ fire, data = vege_hc,
+       var.equal = TRUE)
+
+report::report(pruebaT)
+
+    ```
+
+```{r}
+# A1: Normalidad para una prueba t dependiente, se evalua sobre la diferencia de los promedios
+
+vege_dif <- vege_hot[1:10] - vege_control[1:10]
+shapiro.test(vege_dif)
+plot(density(vege_dif))
+
+# PRUEBA t CON MUESTRAS DEPENDIENTES
+#t.test(rgr_diam_plot_20_21 ~ fire, data = vege_hc, var.equal = TRUE)
+
+
+
+t.test(vege_hot[1:10], vege_control[1:10],
+       var.equal = TRUE,
+       paired = TRUE)
+
+vege_hc2 <- vege_hc %>% 
+  group_by(fire) %>% 
+  sample_n(10) %>% 
+  ungroup()
+
+ggwithinstats(vege_hc2, x = fire, y = rgr_diam_plot_20_21,
+              type = "p")
+
+```
+
+# Prueba de U de Mann-Whitney
+```{r}
+# No paramétrica para muestras independientes
+# A1 
+
+#A3 Distribuciones similares
+par(mfrow = c(1,2))
+
+plot(density(vege_hot))
+plot(density(vege_control))
+dev.off()
+
+#Ejecutar prueba
+
+res_u <- wilcox.test(vege_hot, vege_control, paired = FALSE)
+
+#Grafica
+library(ggstatsplot)
+ggbetweenstats(vege_hc2, x = fire, y = rgr_diam_plot_20_21, 
+               type = "np",
+               bf.message = FALSE)
+report::report(res_u)
+
+```
+
+# Prueba de Wilcoxon
+
+```{r}
+res_w <- wilcox.test(vege_hot[1:10], vege_control[1:10], paired = TRUE)
+
+ggwithinstats(vege_hc2, x = fire, y = rgr_diam_plot_20_21, 
+               type = "np",
+               bf.message = FALSE)
+
+report::report(res_w)
+```
+
+# Pruebas de ANOVA y Kruskal-Wallis
+
+```{r}
+# ANOVA de una Vía
+anova1 <- aov(grass_cover_out_21 ~ fire, data = vege)
+anova1
+summary(anova1)
+#Pr(>F) = p-valor
+
+
+
+
+# A1 Independencia de las observaciones
+# A2 Normalidad
+
+str(vege)
+plot(density(vege$`rgr_diam_plot_20-21`))
+plot(density(vege$grass_cover_out_21))
+
+# PARA PODER QUITAR ESPACIOS EN BLANCO DENTRO DE LOS NOMBRES, O REEMPLAZAR LETRAS, ALGO POR ALGO
+vege <- vege %>% 
+  mutate(fire = stringr::str_replace(fire, 
+                                     pattern = " ", 
+                                     replacement = ""))
+
+
+ggplot(vege, aes(x = grass_cover_out_21,
+                 color = fire))+
+  geom_density(lwd = 1)+
+  theme_light()
+
+ggplot(vege, aes(y = grass_cover_out_21,
+                 x = fire,
+                 color = fire))+
+  geom_boxplot()+
+  theme_light()
+
+# PARA VER LA NORMALIDAD
+
+residuales1 <- residuals(anova1)
+plot(density(residuales1))
+
+ggplot(vege, aes(sample = grass_cover_out_21, color = fire))+
+  geom_qq()+
+  geom_qq_line()+
+  facet_wrap(~fire)
+
+tapply(residuales1, vege$fire, shapiro.test)
+
+# A3 Homocedasticidad
+
+leveneTest(grass_cover_out_21 ~ fire, data = vege, center = mean)
+
+# Prueba de Post Hoc
+
+tk1 <- TukeyHSD(anova1)
+
+tapply(vege$grass_cover_out_21, vege$fire, mean)
+# reporte de los resultados
+
+report::report(anova1)
+report::report(tk1)
+
+#Grafico
+
+ggbetweenstats(vege, y=grass_cover_out_21, x=fire, type="p",
+               var.equal = TRUE, bf.message = FALSE)
+```
+
+De manera pareada, el único par de caterogías de la variable "fire" que  no mostró diferencias significativas entre sus promedios de cobertura de grass para el 2021, son control (x = 69.70), cold (x = 56-40) diferencia = 13.29 [-593, 32,53] p-adj. = 0.22.
+Por su parte la comparativa entre cold y hot (x = 36.56), fue significativa (diferencia = -19.84 [-38.13, -1.55], p-adj= 0.03) 
+
+```{r}
+#EJEMPLIFICAR LA PRUEBA DE KRUSKAL WALLIS
+kruskal.test(rgr_diam_plot_20_21 ~ fire, data = vege)
+
+# A3
+plot(density(vege$rgr_diam_plot_20_21))
+ggplot(vege, aes(x= rgr_diam_plot_20_21, color = fire))+
+  geom_density(lwd = 1)
+
+
+#Grafico
+ggbetweenstats(vege, x = fire, y = rgr_diam_plot_20_21,
+              type = "np")
+
+# Post Hoc
+dunn_test(vege, rgr_diam_plot_20_21 ~ fire)
+
+
+ggbetweenstats()
+ggwithinstats()
+```
+
+# ANOVA de dos VÍAS (UNIFACTORIAL)
+```{r}
+unique(vege$fire)
+unique(vege$exclosure)
+
+anova2 <- aov(grass_cover_out_21 ~ fire + exclosure, data = vege)
+
+#Une las columnas, pero elimina las que ha unido, no recomendable
+vege <- vege %>% 
+  tidyr::unite(col = "factores", fire, exclosure, sep = "-", remove = FALSE)
+
+unique(vege$factores)
+
+residuales2 <- residuals(anova2)
+tapply(residuales2, vege$factores, shapiro.test)
+
+ggplot(vege, aes(sample = residuales2, color = factores))+
+  geom_qq()+
+  geom_qq_line()+
+  facet_wrap(~factores)
+
+
+# A1
+# A2 normalidad
+tapply(residuales2, vege$factores, shapiro.test)
+
+ggplot(vege, aes(sample = residuales2, color = factores))+
+  geom_qq()+
+  geom_qq_line()+
+  facet_wrap(~factores)
+# A3 varianza
+leveneTest(grass_cover_out_21 ~ fire, data = vege, center = mean)
+leveneTest(grass_cover_out_21 ~ exclosure, data = vege, center = mean)
+
+ggplot(vege, aes(x= exclosure, y = grass_cover_out_21))+
+  geom_boxplot()
+
+ggplot(vege, aes(x= factores, y = grass_cover_out_21))+
+  geom_boxplot()
+
+# A4 
+vege %>% 
+  count(factores)
+
+# Gráfico
+ggbetweenstats(vege, y = grass_cover_out_21, x = fire, type = "p")
+ggbetweenstats(vege, y = grass_cover_out_21, x = exclosure, type = "p")
+
+# Post Hoc
+TukeyHSD(anova2)
+
+```
+
+# Anova de dos vías (Factorial)
+```{r}
+anova3 <- aov(grass_cover_out_21 ~ fire * exclosure, data = vege)
+summary(anova3)
+
+interaction.plot(x.factor = vege$exclosure,
+                 trace.factor = vege$fire,
+                 response = vege$grass_cover_out_21)
+
+```
+
+# Prueba de Chi-cuadrado
+
+```{r}
+ecosistema <- c("Bosque", "Bosque", "Pradera", "Pradera", "Humedal", "Humedal")
+presencia <- c("Observada", "No Observada", "Observada", "No Observada", "Observada", "No Observada")
+frecuencias <- c(40, 60, 30, 70, 80, 20)
+
+datos2 <- data.frame(ecosistema, presencia, frecuencias)
+datos2
+
+# Tabla de datos de frecuencias contabilizadas -  Tabla de contingencias, para datos donde la frecuencia aparece en la misma tabla
+tc1 <- xtabs(frecuencias ~ ecosistema + presencia, data = datos2)
+
+# Tabla de contingencia desde una base de datos 
+
+tc2 <- table(vege$fire, vege$exclosure)
+
+#----------------------#
+# Test de asociación de chi-cuadrado, 
+res_x2_1 <- chisq.test(tc1)
+# df = grados de libertad
+# p-value < 0.05, hay evidencia suficiente para la 
+
+res_x2_1$expected
+
+# Prueba de asociación de chi-cuadrado, con corrección de Yates, solo se aploca cuando alguna de las casillas o niveles <= 5
+
+chisq.test(tc1, correct = TRUE)
+
+# SOLO Y ÚNICAMENTE SE PUEDE APLICAR LA CORRECCIÓN DE FISHER PERO, PARA USAR ESTA PRUEBA SE TIENE QUE TENER UNA TABLA CUADRADAD (CADA CATEGORÍA CON NIVELES IGUALES)
+#-------------------------------------*
+res_x2_2 <- chisq.test(tc2)
+tc2
+#vege <- vege %>% mutate(fire = stringr::str_replace(fire, pattern = " ", replacement = ""))
+
+res_x2_2$observed 
+res_x2_2$expected
+
+
+#--------------------------------*
+# EL TAMAÑO DEL EFECTO DE LA ASOCIACIÓN
+# Aplicar este test cuando se encuentre que hay un chi-cuadrado significativo, osea, existe una asociación - dependencia.
+
+library(rcompanion)
+cramerV(tc1)
+
+# Grafico-------------------------------
+# PRUEBA DE CORRESPONDENCIA
+
+install.packages("FactoMineR")
+library(FactoMineR)
+res_ca <- CA(tc1)
+res_ca <- CA(as.table(tc1))
+
+res_ca2 <- CA(tc2)
+
+install.packages("factoextra")
+library(factoextra)
+
+fviz_ca(res_ca2)
+
+
+# SOLO Y ÚNICAMENTE SE PUEDE APLICAR LA CORRECCIÓN DE FISHER PERO, PARA USAR ESTA PRUEBA SE TIENE QUE TENER UNA TABLA CUADRADAD (CADA CATEGORÍA CON NIVELES IGUALES) y que tenga valores de frecuencia menor o igual a 5 (<=5)
+
+tabla <- matrix(c(1, 9, 11, 3), nrow = 2, byrow = TRUE)
+rownames(tabla) <- c("Tratamiento", "Control")
+colnames(tabla) <- c("Éxito", "Fracaso")
+
+fisher.test(tabla)
+rcompanion::cramerV(tabla)
+
+res_fish <- ca::ca(tabla)
+fviz_ca(res_fish)
+
+
+
+
+
+ggplot(aves, aes(sample = residuales, color = factor))
+
+```
+    

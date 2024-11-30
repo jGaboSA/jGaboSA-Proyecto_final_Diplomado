@@ -8,7 +8,7 @@
 
 <meta name="author" content="J. Gabriel Sulca Aguilar">
 
-<title>Proyecto_final_Diplomado</title>
+<title>Exam_final_mod6</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -80,9 +80,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Tabla de contenidos</h2>
    
   <ul>
-  <li><a href="#este-es-mi-base-de-datos" id="toc-este-es-mi-base-de-datos" class="nav-link active" data-scroll-target="#este-es-mi-base-de-datos">Este es mi base de Datos</a></li>
-  <li><a href="#quarto" id="toc-quarto" class="nav-link" data-scroll-target="#quarto">Quarto</a></li>
-  <li><a href="#running-code" id="toc-running-code" class="nav-link" data-scroll-target="#running-code">Running Code</a></li>
+  <li><a href="#modulo-6-estadística-inferencial-básica" id="toc-modulo-6-estadística-inferencial-básica" class="nav-link active" data-scroll-target="#modulo-6-estadística-inferencial-básica">Modulo 6: Estadística Inferencial Básica</a>
+  <ul class="collapse">
+  <li><a href="#carga-de-librerias" id="toc-carga-de-librerias" class="nav-link" data-scroll-target="#carga-de-librerias">Carga de librerias</a></li>
+  <li><a href="#carga-de-base-de-datos" id="toc-carga-de-base-de-datos" class="nav-link" data-scroll-target="#carga-de-base-de-datos">Carga de Base de datos</a></li>
+  </ul></li>
+  <li><a href="#prueba-de-anova-de-dos-vías" id="toc-prueba-de-anova-de-dos-vías" class="nav-link" data-scroll-target="#prueba-de-anova-de-dos-vías">Prueba de ANOVA de dos Vías</a>
+  <ul class="collapse">
+  <li><a href="#a2-normalidad" id="toc-a2-normalidad" class="nav-link" data-scroll-target="#a2-normalidad">A2 Normalidad</a></li>
+  <li><a href="#a3-homogeneidad-de-varianzas" id="toc-a3-homogeneidad-de-varianzas" class="nav-link" data-scroll-target="#a3-homogeneidad-de-varianzas">A3: Homogeneidad de varianzas</a></li>
+  <li><a href="#graficando" id="toc-graficando" class="nav-link" data-scroll-target="#graficando">Graficando</a></li>
+  </ul></li>
+  <li><a href="#este-es-mi-base-de-datos" id="toc-este-es-mi-base-de-datos" class="nav-link" data-scroll-target="#este-es-mi-base-de-datos">Este es mi base de Datos</a></li>
   </ul>
 <div class="quarto-code-links"><h2>Code Links</h2><ul><li><a href="https://www.masterx.academy/"><i class="bi bi-file-code"></i>Visitanos</a></li></ul></div></nav>
 </div>
@@ -92,7 +101,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Proyecto_final_Diplomado</h1>
+<h1 class="title">Exam_final_mod6</h1>
 </div>
 
 
@@ -115,16 +124,317 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
+<section id="modulo-6-estadística-inferencial-básica" class="level2">
+<h2 class="anchored" data-anchor-id="modulo-6-estadística-inferencial-básica">Modulo 6: Estadística Inferencial Básica</h2>
+<section id="carga-de-librerias" class="level3">
+<h3 class="anchored" data-anchor-id="carga-de-librerias">Carga de librerias</h3>
+<div class="cell" data-layout-align="center">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+✔ purrr     1.0.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(openxlsx)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(performance)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggstatsplot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>You can cite this package as:
+     Patil, I. (2021). Visualizations with statistical details: The 'ggstatsplot' approach.
+     Journal of Open Source Software, 6(61), 3167, doi:10.21105/joss.03167</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rstatix)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Adjuntando el paquete: 'rstatix'
+
+The following object is masked from 'package:stats':
+
+    filter</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pwr)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pwr2)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(simr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Cargando paquete requerido: lme4
+Cargando paquete requerido: Matrix
+
+Adjuntando el paquete: 'Matrix'
+
+The following objects are masked from 'package:tidyr':
+
+    expand, pack, unpack
+
+
+Adjuntando el paquete: 'simr'
+
+The following object is masked from 'package:lme4':
+
+    getData
+
+The following object is masked from 'package:stringr':
+
+    fixed</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nortest)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Cargando paquete requerido: carData
+
+Adjuntando el paquete: 'car'
+
+The following object is masked from 'package:dplyr':
+
+    recode
+
+The following object is masked from 'package:purrr':
+
+    some</code></pre>
+</div>
+</div>
+</section>
+<section id="carga-de-base-de-datos" class="level3">
+<h3 class="anchored" data-anchor-id="carga-de-base-de-datos">Carga de Base de datos</h3>
+<div class="cell" data-layout-align="center">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>aves <span class="ot">&lt;-</span> openxlsx<span class="sc">::</span><span class="fu">read.xlsx</span>(<span class="st">"bases/Data-JAPPL-2023-00856.xlsx"</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(aves)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   180 obs. of  22 variables:
+ $ Site                            : chr  "Banting" "Banting" "Banting" "Banting" ...
+ $ Management                      : chr  "Smallholding" "Smallholding" "Smallholding" "Smallholding" ...
+ $ Point                           : num  1 2 3 4 5 6 7 8 9 10 ...
+ $ Month                           : chr  "January" "January" "January" "January" ...
+ $ Year                            : num  2014 2014 2014 2014 2014 ...
+ $ Crown.damage                    : num  5.25 5.29 1.58 4.92 2.04 2.75 2.58 5.25 1 3.5 ...
+ $ Frond.damage                    : num  13.29 11.24 22.46 6.13 2.38 ...
+ $ Oil.palm.height                 : num  3.5 7.9 12 8.7 4.5 5 2 5.3 6 3 ...
+ $ Grass.cover                     : num  36.2 28.8 7.5 37.5 16.2 ...
+ $ Shrub.cover                     : num  15 33.8 45 46.2 13.8 ...
+ $ Dried.biomass                   : num  28.8 11.2 23.8 23.8 25 ...
+ $ Epiphyte.cover                  : num  41.8 12.5 21.2 75 20 ...
+ $ Canopy.cover                    : num  75 50 50 25 50 50 75 100 100 75 ...
+ $ Distance.to.forest.patch        : num  4.29 4.38 4.78 5.22 2.54 ...
+ $ Distance.to.continuous.forest   : num  44.2 44.5 45.1 46.1 44 ...
+ $ Elevation                       : num  11 9 10 10 11 10 12 7 10 10 ...
+ $ Bird.richness.(overall)         : num  5 4 6 5 6 4 5 7 5 8 ...
+ $ Bird.abundance.(overall)        : num  17 7 11 13 14 12 8 16 9 15 ...
+ $ Bird.richness.(insectivore)     : num  2 2 2 2 2 3 2 3 2 4 ...
+ $ Bird.abundance.(insectivore)    : num  4 4 4 5 5 10 4 8 4 8 ...
+ $ Bird.richness.(non-insectivore) : num  3 2 4 3 4 1 3 4 3 4 ...
+ $ Bird.abundance.(non-insectivore): num  13 3 7 8 9 2 4 8 5 7 ...</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(aves)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+</section>
+<section id="prueba-de-anova-de-dos-vías" class="level2">
+<h2 class="anchored" data-anchor-id="prueba-de-anova-de-dos-vías">Prueba de ANOVA de dos Vías</h2>
+<div class="cell" data-layout-align="center">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A1: Independencia de las observaciones</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># A2: Normalidad</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># A3: Homogeneidad de varianzas</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>anova1 <span class="ot">&lt;-</span> <span class="fu">aov</span>(<span class="st">`</span><span class="at">Bird.abundance.(overall)</span><span class="st">`</span> <span class="sc">~</span> Site <span class="sc">+</span> Management, <span class="at">data =</span> aves)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(anova1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>             Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+Site          5   5614  1122.7   17.42 5.76e-14 ***
+Residuals   174  11214    64.5                     
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>aves <span class="ot">&lt;-</span> aves <span class="sc">%&gt;%</span> </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">unite</span>(<span class="at">col =</span> <span class="st">"factor"</span>, Site, Management, <span class="at">sep =</span> <span class="st">"-"</span>, <span class="at">remove =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(aves<span class="sc">$</span>factor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Banting-Smallholding"          "Tanjung Karang-Smallholding"  
+[3] "Sabak Bernam-Smallholding"     "Kemayan-Industrial plantation"
+[5] "Segamat-Industrial plantation" "Besout-Industrial plantation" </code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>residuales <span class="ot">&lt;-</span> <span class="fu">residuals</span>(anova1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="a2-normalidad" class="level3">
+<h3 class="anchored" data-anchor-id="a2-normalidad">A2 Normalidad</h3>
+<div class="cell" data-layout-align="center">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A1</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tapply</span>(residuales, aves<span class="sc">$</span>factor, shapiro.test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>$`Banting-Smallholding`
+
+    Shapiro-Wilk normality test
+
+data:  X[[i]]
+W = 0.94586, p-value = 0.1308
+
+
+$`Besout-Industrial plantation`
+
+    Shapiro-Wilk normality test
+
+data:  X[[i]]
+W = 0.93165, p-value = 0.05434
+
+
+$`Kemayan-Industrial plantation`
+
+    Shapiro-Wilk normality test
+
+data:  X[[i]]
+W = 0.97034, p-value = 0.5486
+
+
+$`Sabak Bernam-Smallholding`
+
+    Shapiro-Wilk normality test
+
+data:  X[[i]]
+W = 0.94674, p-value = 0.1382
+
+
+$`Segamat-Industrial plantation`
+
+    Shapiro-Wilk normality test
+
+data:  X[[i]]
+W = 0.94279, p-value = 0.1081
+
+
+$`Tanjung Karang-Smallholding`
+
+    Shapiro-Wilk normality test
+
+data:  X[[i]]
+W = 0.92904, p-value = 0.04631</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># "Banting-Smallholding" (NORMAL)         </span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># "Tanjung Karang-Smallholding" (NORMAL) </span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co"># "Sabak Bernam-Smallholding" (NORMAL)    </span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># "Kemayan-Industrial plantation" (NORMAL)</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co"># "Segamat-Industrial plantation" (NORMAL)</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="co"># "Besout-Industrial plantation" (NO-NORMAL) -&gt; sin embargo, en el gráfico puede considerarse normal, porque la mayoría de los puntos se encuentran dentro de la linea de tendencia.</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(aves, <span class="fu">aes</span>(<span class="at">sample =</span> residuales, <span class="at">color =</span> factor))<span class="sc">+</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_qq</span>()<span class="sc">+</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_qq_line</span>()<span class="sc">+</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>factor)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="a3-homogeneidad-de-varianzas" class="level3">
+<h3 class="anchored" data-anchor-id="a3-homogeneidad-de-varianzas">A3: Homogeneidad de varianzas</h3>
+<div class="cell" data-layout-align="center">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">leveneTest</span>(<span class="st">`</span><span class="at">Bird.abundance.(overall)</span><span class="st">`</span> <span class="sc">~</span> Site, <span class="at">data =</span> aves, <span class="at">center =</span> mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Levene's Test for Homogeneity of Variance (center = mean)
+       Df F value    Pr(&gt;F)    
+group   5   5.168 0.0001904 ***
+      174                      
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">leveneTest</span>(<span class="st">`</span><span class="at">Bird.abundance.(overall)</span><span class="st">`</span> <span class="sc">~</span> Management, <span class="at">data =</span> aves, <span class="at">center =</span> mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Levene's Test for Homogeneity of Variance (center = mean)
+       Df F value   Pr(&gt;F)   
+group   1  8.6349 0.003735 **
+      178                    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>En al prueba de normalidad de los residuales, los p-valores fueron &gt; a 0.05 lo que indicaba que si tenían normalidad, a excepción de “Besout-Industrial plantation”, que con el gráfico se podía dar lugar a una supuesta normalidad.</p>
+<p>Ya en la prueba de Levene, para el test de Homogeneidad de Varianzas, los p-valores tanto para Site y Management fueron menores menores a 0.05 (p-valor &lt; 0.05), por lo que no se puede aplicar esta prueba Modelo estadístico para explicar la Abundancia de aves, lo que se puede sugerir que se aplique otra prueba como el Kruskal Wallis o una prueba más robusta para el ANOVA -&gt; ANOVA - Welch</p>
+</section>
+<section id="graficando" class="level3">
+<h3 class="anchored" data-anchor-id="graficando">Graficando</h3>
+<div class="cell" data-layout-align="center">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggbetweenstats</span>(aves, <span class="at">y =</span> <span class="st">`</span><span class="at">Bird.abundance.(overall)</span><span class="st">`</span>, <span class="at">x =</span> Site, <span class="at">Management =</span> <span class="st">"np"</span>,</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">bf.message =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">pairwise.display =</span> <span class="st">"s"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Los valores que se encuentran en la parte superior del gráfico donde destaca la F-Welch, con el valor de F(5, 79.91) = 25.30 con lo que se haya el p-valor = 3.33 * 10^15, lo que indica que es menor a 0.05, lo que por consecuencia, se dispone a Rechazar la H0 que indica que los promedios de todos los grupos son iguales.</p>
+<p>El tamaño del efecto es de 0.59, lo que revisando el paper de tamaño de efectos, nos indica que con este valor se tiene un efecto grande.</p>
+<p>Con los p-valores en el gráfico, realizada con la Prueba Post Hoc de Games-Howell, nos representa que el promedio del grupo Banting es significativamente diferente con con todas los otros factores, ya que el p-valor con todos ellos son menor a 0.05 (p-valor &lt; 0.05), por otra parte, El grupo Kemaya y Sabak Bernam, son otros dos grupos que presentan una diferencia significativa en sus promedios.</p>
+</section>
+</section>
 <section id="este-es-mi-base-de-datos" class="level2">
 <h2 class="anchored" data-anchor-id="este-es-mi-base-de-datos">Este es mi base de Datos</h2>
 <p>Este viene a ser mi base de datos</p>
 <div class="cell" data-layout-align="center" data-scrollable="true">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>Base_datos <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"bases/Data-JAPPL-2023-00856.xlsx"</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>Base_datos </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>Base_datos <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"bases/Data-JAPPL-2023-00856.xlsx"</span>)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>Base_datos </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 180 × 22
@@ -149,14 +459,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 #   `Bird richness (insectivore)` &lt;dbl&gt;, …</code></pre>
 </div>
 </div>
-</section>
-<section id="quarto" class="level2">
-<h2 class="anchored" data-anchor-id="quarto">Quarto</h2>
-<p>Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <a href="https://quarto.org" class="uri">https://quarto.org</a>.</p>
-</section>
-<section id="running-code" class="level2">
-<h2 class="anchored" data-anchor-id="running-code">Running Code</h2>
-<p>When you click the <strong>Render</strong> button a document will be generated that includes both content and the output of embedded code. You can embed code like this:</p>
 </section>
 
 </main>

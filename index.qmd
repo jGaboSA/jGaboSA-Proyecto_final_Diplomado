@@ -12,7 +12,7 @@ format:
         icon: file-code
         href: https://www.masterx.academy/
 theme: league
-editor_options: 
+editor_options:
   chunk_output_type: console
 ---
 

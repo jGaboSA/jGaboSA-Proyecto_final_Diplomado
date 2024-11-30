@@ -1,5 +1,5 @@
 ---
-title: "Proyecto_final_Diplomado"
+title: "Exam_final_mod6"
 author: "J. Gabriel Sulca Aguilar"
 format: 
    html:
@@ -16,6 +16,8 @@ editor_options:
   chunk_output_type: console
 ---
 
+
+
 ```{r}
 #| label: Setup
 #| include: False
@@ -28,20 +30,6 @@ knitr::opts_chunk$set(
 )
 
 ```
-
-## Este es mi base de Datos
-
-Este viene a ser mi base de datos
-
-```{r}
-#| label: Carga de datos
-#| scrollable: True
-library(readxl)
-Base_datos <- read_excel("bases/Data-JAPPL-2023-00856.xlsx")
-
-Base_datos 
-```
-
 ## Modulo 6: Estadística Inferencial Básica
 
 ### Carga de librerias
@@ -126,10 +114,18 @@ El tamaño del efecto es de 0.59, lo que revisando el paper de tamaño de efecto
 
 Con los p-valores en el gráfico, realizada con la Prueba Post Hoc de Games-Howell, nos representa que el promedio del grupo Banting es significativamente diferente con con todas los otros factores, ya que el p-valor con todos ellos son menor a 0.05 (p-valor < 0.05), por otra parte, El grupo Kemaya y Sabak Bernam, son otros dos grupos que presentan una diferencia significativa en sus promedios. 
 
-## Quarto
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
 
-## Running Code
+## Este es mi base de Datos
 
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+Este viene a ser mi base de datos
+
+```{r}
+#| label: Carga de datos
+#| scrollable: True
+library(readxl)
+Base_datos <- read_excel("bases/Data-JAPPL-2023-00856.xlsx")
+
+Base_datos 
+```
+
